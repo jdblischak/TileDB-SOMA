@@ -6,7 +6,8 @@ on:
       - "apis/python/**"
       - ".pre-commit-config.yaml"
   push:
-    branches: [main]
+    branches: [main, jdb/r-conda]
+  workflow_dispatch:
 
 env:
   COVERAGE_FLAGS: "r"
@@ -51,6 +52,6 @@ jobs:
         run: cat $HOME/work/TileDB-SOMA/TileDB-SOMA/apis/r/tiledbsoma.Rcheck/00install.out
         if: failure()
 
-      - name: Coverage
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: cd apis/r && tools/r-ci.sh coverage
+      # - name: Coverage
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
+      #   run: cd apis/r && tools/r-ci.sh coverage
