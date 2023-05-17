@@ -11,7 +11,7 @@ all: $(SHLIB)
         # Case one: If we had a downloaded TileDB Core artifact, adjust zlib path and add to @rpath
         # Case two: If we see the system libraries (on macOS) ensure /usr/local/lib rpath is considered
         # Case three: If it is a conda build, don't run install_name_tool
-	if [ ! -z "$CONDA_BUILD" ]; then \
+	if [ ! -z "$$CONDA_BUILD" ]; then \
 	    exit 0; \
 	fi; \
 	if [ `uname -s` = 'Darwin' ] && [ -f tiledbsoma.so ]; then \
