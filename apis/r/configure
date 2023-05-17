@@ -26,6 +26,7 @@ if [ $? -eq 0 ]; then
             src/Makevars.in > src/Makevars
 
         echo "** updated src/Makevars for system library via pkg-config"
+        cat src/Makevars
 
         ## we can exit now as we have a working setup
         exit 0
@@ -53,3 +54,4 @@ sed -e "s|@tiledb_include@|$pkgincl |" \
     -e "s|@tiledb_rpath@|$rpath|" \
     -e "s|@cxx17_macos@|$macosver|" \
     src/Makevars.in > src/Makevars
+cat src/Makevars
