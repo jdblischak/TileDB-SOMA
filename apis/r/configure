@@ -10,12 +10,6 @@ if test -z "${R_HOME}"; then
     exit 1
 fi
 
-## Let conda work things out
-if ! test -z "${CONDA_BUILD}"; then
-    echo Detected the package is being built for conda
-    exit 0
-fi
-
 ## Check for pkg-config and use it to inquire about tiledb and tiledbsoma build options
 pkg-config --version >/dev/null 2>&1
 if [ $? -eq 0 ]; then
