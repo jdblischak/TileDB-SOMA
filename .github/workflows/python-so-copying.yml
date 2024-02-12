@@ -22,11 +22,16 @@ jobs:
     container:
       image: ubuntu:22.04
     steps:
-      - uses: actions/checkout@v4
       - run: uname -a
       - name: Setup
         run: |
           apt-get update
           apt-get install --yes git python-is-python3 python3 python3-pip python3-venv unzip wget
-          python --version
+      - uses: actions/checkout@v4
       - run: git log -n 1 --oneline
+      - name: Setup Python
+        run: |
+          python --version
+          python -m venv ./venv-soma
+          source ./venv-soma/bin/activate
+          pip install --prefer-binary cmake pybind11-global typeguard sparse wheel
