@@ -16,6 +16,10 @@ on:
       - 'libtiledbsoma/cmake/**'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: ubuntu-latest
