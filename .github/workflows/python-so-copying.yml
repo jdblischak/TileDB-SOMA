@@ -58,8 +58,10 @@ jobs:
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Runtime test
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
-      - name: Check RPATH
-        run: readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
+      - name: Check linking and RPATH
+        run: |
+          ldd ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+          readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
       - name: Search for shared objects
         run: find . -name '*tile*.so'
       - name: Confirm linking to installed shared objects
