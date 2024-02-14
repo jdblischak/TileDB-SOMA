@@ -23,6 +23,11 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: "TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        TILEDB_EXISTS: ["no", "yes"]
     container:
       image: ubuntu:22.04
     steps:
@@ -43,6 +48,7 @@ jobs:
           git config --global --add safe.directory $(pwd)
           git branch
       - name: Install pre-built libtiledb
+        if: ${{ matrix.TILEDB_EXISTS == 'yes' }}
         run: |
           mkdir -p external
           wget --quiet https://github.com/TileDB-Inc/TileDB/releases/download/2.19.1/tiledb-linux-x86_64-2.19.1-29ceb3e7.tar.gz
