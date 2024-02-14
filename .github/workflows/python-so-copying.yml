@@ -39,7 +39,8 @@ jobs:
           fetch-depth: 0 # for setuptools-scm
       - name: Configure Git
         run: |
-          git config --global --add safe.directory /__w/TileDB-SOMA/TileDB-SOMA
+          # This is a permissions quirk due to running Git as root inside of a Docker container
+          git config --global --add safe.directory .
           git branch
       - name: Setup Python
         run: |
