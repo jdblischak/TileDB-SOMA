@@ -36,5 +36,5 @@ jobs:
         run: |
           python --version
           python -m venv ./venv-soma
-          source ./venv-soma/bin/activate
-          pip install --prefer-binary cmake pybind11-global typeguard sparse wheel
+          ./venv-soma/bin/python -m pip install --prefer-binary cmake pybind11-global typeguard sparse wheel
+          ./venv-soma/bin/python -m pip list
