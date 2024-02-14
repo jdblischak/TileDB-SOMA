@@ -41,7 +41,7 @@ jobs:
       - name: Build wheel
         run: |
           cd apis/python
-          ./venv-soma/bin/python setup.py bdist_wheel
+          ../../venv-soma/bin/python setup.py bdist_wheel
           unzip -l dist/tiledbsoma-*.whl | grep '\.so'
           ls
           ls -R dist/
