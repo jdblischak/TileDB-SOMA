@@ -26,10 +26,7 @@ jobs:
     container:
       image: ubuntu:22.04
     steps:
-      - name: Docker image info
-        run: |
-          uname -a
-          cat /etc/lsb-release
+      - run: uname -a
       - name: Setup
         run: |
           apt-get update
@@ -43,9 +40,8 @@ jobs:
           ./venv-soma/bin/python -m pip list
       - name: Build wheel
         run: |
-          source ./venv-soma/bin/activate
           cd apis/python
-          python setup.py bdist_wheel
+          ../../venv-soma/bin/python setup.py bdist_wheel
           unzip -l dist/tiledbsoma-*.whl | grep '\.so'
           ls
           ls -R dist/
