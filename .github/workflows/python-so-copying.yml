@@ -70,6 +70,17 @@ jobs:
           ../../venv-soma/bin/python setup.py bdist_wheel
       - name: Inspect wheel
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
+      - name: Confirm libtiledb.so is copied
+        if: ${{ matrix.TILEDB_EXISTS == 'no' }}
+        run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.so
+      - name: Confirm libtiledb.so is **not** copied when using external shared object
+        if: ${{ matrix.TILEDB_EXISTS == 'yes' }}
+        run: |
+          if unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.so
+          then
+            echo "libtiledb.so was copied into the wheel when it was built against an external shared object"
+            exit 1
+          fi
       - name: Install wheel
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Check linking and RPATH
