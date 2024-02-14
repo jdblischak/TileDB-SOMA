@@ -31,7 +31,7 @@ jobs:
         run: |
           apt-get update
           apt-get install --yes git python-is-python3 python3 python3-pip python3-venv unzip wget
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # for setuptools-scm
       - name: Setup Python
@@ -53,3 +53,5 @@ jobs:
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Check RPATH
         run: readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
+      - name: Search for shared objects
+        run: find . -name '*tile*.so'
