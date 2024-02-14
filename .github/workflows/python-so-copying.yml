@@ -25,6 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:22.04
+    env:
+      LD_LIBRARY_PATH: ${{ github.workspace }}/external/lib
+      PKG_CONFIG_PATH: ${{ github.workspace }}/external/lib/pkgconfig
     steps:
       - name: Docker image info
         run: |
@@ -42,6 +45,12 @@ jobs:
           # This is a permissions quirk due to running Git as root inside of a Docker container
           git config --global --add safe.directory $(pwd)
           git branch
+      - name: Install pre-built libtiledb
+        run: |
+          mkdir -p external
+          wget --quiet https://github.com/TileDB-Inc/TileDB/releases/download/2.19.1/tiledb-linux-x86_64-2.19.1-29ceb3e7.tar.gz
+          tar -C external -xzf tiledb-linux-x86_64-*.tar.gz
+          ls external/lib/
       - name: Setup Python
         run: |
           python --version
