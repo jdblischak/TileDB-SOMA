@@ -100,10 +100,10 @@ jobs:
             exit 1
           fi
       - name: Confirm libtiledbsoma.so is copied
-        if: ${{ matrix.TILEDBSOMA_EXISTS == 'yes' }}
+        if: ${{ matrix.TILEDBSOMA_EXISTS == 'no' }}
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledbsoma.so
       - name: Confirm libtiledbsoma.so is **not** copied when using external shared object
-        if: ${{ matrix.TILEDBSOMA_EXISTS == 'no' }}
+        if: ${{ matrix.TILEDBSOMA_EXISTS == 'yes' }}
         run: |
           if unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledbsoma.so
           then
