@@ -61,6 +61,20 @@ jobs:
           echo "LD_LIBRARY_PATH=$(pwd)/external/lib" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=$(pwd)/external/lib/pkgconfig" >> $GITHUB_ENV
           echo "TILEDB_PATH=$(pwd)/external" >> $GITHUB_ENV
+      - name: Build and install libtiledbsoma
+        if: ${{ matrix.TILEDBSOMA_EXISTS == 'yes' }}
+        run: |
+          cmake -S libtiledbsoma -B build-libtiledbsoma \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_PREFIX_PATH=$(pwd)/external/ \
+            -D CMAKE_INSTALL_PREFIX:PATH=$(pwd)/external/ \
+            -D OVERRIDE_INSTALL_PREFIX=OFF \
+            -D DOWNLOAD_TILEDB_PREBUILT=OFF \
+            -D FORCE_BUILD_TILEDB=OFF
+          cmake --build build-libtiledbsoma -j $(nproc)
+          cmake --build build-libtiledbsoma --target install-libtiledbsoma
+          ls external/lib/
+          echo "TILEDBSOMA_PATH=$(pwd)/external" >> $GITHUB_ENV
       - name: Setup Python
         run: |
           python --version
@@ -69,7 +83,7 @@ jobs:
           ./venv-soma/bin/python -m pip list
       - name: Build wheel
         run: |
-          echo $LD_LIBRARY_PATH $PKG_CONFIG_PATH $TILEDB_PATH
+          echo env vars: $LD_LIBRARY_PATH $PKG_CONFIG_PATH $TILEDB_PATH $TILEDBSOMA_PATH
           cd apis/python
           ../../venv-soma/bin/python setup.py bdist_wheel
       - name: Inspect wheel
@@ -85,6 +99,17 @@ jobs:
             echo "libtiledb.so was copied into the wheel when it was built against an external shared object"
             exit 1
           fi
+      - name: Confirm libtiledbsoma.so is copied
+        if: ${{ matrix.TILEDBSOMA_EXISTS == 'no' }}
+        run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledbsoma.so
+      - name: Confirm libtiledbsoma.so is **not** copied when using external shared object
+        if: ${{ matrix.TILEDBSOMA_EXISTS == 'yes' }}
+        run: |
+          if unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledbsoma.so
+          then
+            echo "libtiledbsoma.so was copied into the wheel when it was built against an external shared object"
+            exit 1
+          fi
       - name: Install wheel
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Check linking and RPATH
@@ -95,6 +120,6 @@ jobs:
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Confirm linking to installed shared objects
         run: |
-          rm -fr build/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.so*
+          rm -fr build/ build-libtiledbsoma/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.so*
           find . -name '*tile*.so*' # should only show shared objects installed in virtual env
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
