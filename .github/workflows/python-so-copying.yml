@@ -56,16 +56,16 @@ jobs:
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
       - name: Install wheel
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
-      - name: Runtime test
-        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Check linking and RPATH
         run: |
           ldd ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
           readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
+      - name: Runtime test
+        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Search for shared objects
         run: find . -name '*tile*.so*'
       - name: Confirm linking to installed shared objects
         run: |
-          rm -fr build/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.so.*
+          rm -fr build/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.so*
           find . -name '*tile*.so*' # should only show shared objects installed in virtual env
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
