@@ -40,7 +40,7 @@ jobs:
       - name: Configure Git
         run: |
           # This is a permissions quirk due to running Git as root inside of a Docker container
-          git config --global --add safe.directory .
+          git config --global --add safe.directory $(pwd)
           git branch
       - name: Setup Python
         run: |
