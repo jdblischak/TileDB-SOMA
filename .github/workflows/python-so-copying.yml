@@ -23,11 +23,15 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: "TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }}"
+    name: "TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }} TILEDBSOMA_EXISTS: ${{ matrix.TILEDBSOMA_EXISTS }}"
     strategy:
       fail-fast: false
       matrix:
         TILEDB_EXISTS: ["no", "yes"]
+        TILEDBSOMA_EXISTS: ["no", "yes"]
+        exclude:
+          - TILEDB_EXISTS: "no"
+            TILEDBSOMA_EXISTS: "yes"
     container:
       image: ubuntu:22.04
     steps:
@@ -71,10 +75,10 @@ jobs:
       - name: Inspect wheel
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
       - name: Confirm libtiledb.so is copied
-        if: ${{ matrix.TILEDB_EXISTS == 'no' }}
+        if: ${{ matrix.TILEDB_EXISTS == 'yes' }}
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.so
       - name: Confirm libtiledb.so is **not** copied when using external shared object
-        if: ${{ matrix.TILEDB_EXISTS == 'yes' }}
+        if: ${{ matrix.TILEDB_EXISTS == 'no' }}
         run: |
           if unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.so
           then
