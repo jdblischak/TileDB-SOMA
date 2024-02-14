@@ -52,14 +52,17 @@ jobs:
         run: |
           cd apis/python
           ../../venv-soma/bin/python setup.py bdist_wheel
-          unzip -l dist/tiledbsoma-*.whl | grep '\.so'
-          ls
-          ls -R dist/
+      - name: Inspect wheel
+        run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
       - name: Install wheel
-        run: ./venv-soma/bin/python -m pip install --prefer-binary dist/tiledbsoma-*.whl
+        run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Runtime test
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Check RPATH
         run: readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
       - name: Search for shared objects
         run: find . -name '*tile*.so'
+      - name: Confirm linking to installed shared objects
+        run: |
+          rm -r build/ dist/ apis/python/build
+          ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
