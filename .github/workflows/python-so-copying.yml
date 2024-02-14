@@ -38,3 +38,16 @@ jobs:
           python -m venv ./venv-soma
           ./venv-soma/bin/python -m pip install --prefer-binary cmake pybind11-global typeguard sparse wheel
           ./venv-soma/bin/python -m pip list
+      - name: Build wheel
+        run: |
+          cd apis/python
+          ./venv-soma/bin/python setup.py bdist_wheel
+          unzip -l dist/tiledbsoma-*.whl | grep '\.so'
+          ls
+          ls -R dist/
+      - name: Install wheel
+        run: ./venv-soma/bin/python -m pip install --prefer-binary dist/tiledbsoma-*.whl
+      - name: Runtime test
+        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
+      - name: Check RPATH
+        run: readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
