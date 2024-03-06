@@ -256,6 +256,11 @@ jobs:
           cmake --build build-libtiledbsoma -j 2
           cmake --build build-libtiledbsoma --target install-libtiledbsoma
           ls external/lib/
+      # Delete all cmake executables from the runner. This will ensure that
+      # tiledbsoma-py has to use the cli flags to find the external
+      # libtiledbsoma.so and not build it from source by shelling out to cmake
+      - name: Delete cmake
+        run: which -a cmake | xargs sudo rm -f
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
