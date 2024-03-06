@@ -56,9 +56,9 @@ for arg in args:
         tiledbsoma_dir = pathlib.Path(last)
         sys.argv.remove(arg)
 
-tiledb_dir = os.environ.get("TILEDB_PATH", tiledb_dir)
+tiledb_dir = os.environ.get("TILEDB_PATH", None)
 tiledb_given = tiledb_dir is not None
-tiledbsoma_dir = os.environ.get("TILEDBSOMA_PATH", tiledbsoma_dir)
+tiledbsoma_dir = os.environ.get("TILEDBSOMA_PATH", None)
 
 if tiledbsoma_dir is not None and tiledb_dir is None:
     raise ValueError(
