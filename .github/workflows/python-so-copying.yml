@@ -272,8 +272,8 @@ jobs:
           ../../venv-soma/bin/python setup.py install \
             --single-version-externally-managed \
             --record record.txt \
-            --tiledb=../../external/ \
-            --libtiledbsoma=../../external/
+            --tiledb=$GITHUB_WORKSPACE/external/ \
+            --libtiledbsoma=$GITHUB_WORKSPACE/external/
       - name: Check linking and RPATH (Linux)
         if: runner.os == 'Linux'
         run: |
