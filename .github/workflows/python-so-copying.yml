@@ -272,5 +272,5 @@ jobs:
           ../../venv-soma/bin/python setup.py install \
             --single-version-externally-managed \
             --record record.txt \
-            --tiledb=$(pwd)/external/
+            --tiledb=$(pwd)/external/ \
             --libtiledbsoma=$(pwd)/external/
