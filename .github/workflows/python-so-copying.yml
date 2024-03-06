@@ -122,7 +122,8 @@ jobs:
       - name: Confirm linking to installed shared objects
         run: |
           rm -fr build/ build-libtiledbsoma/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.so*
-          find . -name '*tile*.so*' # should only show shared objects installed in virtual env
+          # should only show shared objects installed in virtual env or in ./external/
+          find . -name '*tile*.so*'
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
 
   macos:
