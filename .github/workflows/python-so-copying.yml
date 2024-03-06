@@ -283,4 +283,7 @@ jobs:
         if: runner.os == 'macOS'
         run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
       - name: Runtime test
-        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
+        run: |
+          # install minimal runtime dependencies
+          ./venv-soma/bin/python -m pip install --prefer-binary pyarrow_hotfix somacore
+          ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
