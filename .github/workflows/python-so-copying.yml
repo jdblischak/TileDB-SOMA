@@ -181,7 +181,11 @@ jobs:
           cd apis/python
           ../../venv-soma/bin/python setup.py bdist_wheel
       - name: Inspect wheel
-        run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.dylib'
+        run: |
+          unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.dylib'
+          unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
+          unzip -l apis/python/dist/tiledbsoma-*.whl
+          ls -lR apis/python
       - name: Confirm libtiledb.dylib is copied
         if: ${{ matrix.TILEDB_EXISTS == 'no' }}
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.dylib
@@ -207,7 +211,7 @@ jobs:
       - name: Install wheel
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Check linking and RPATH
-        run: otools -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.dylib
+        run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.dylib
       - name: Runtime test
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Confirm linking to installed shared objects
