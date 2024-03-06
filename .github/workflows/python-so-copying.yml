@@ -166,6 +166,10 @@ jobs:
           ls external/lib/
           echo "TILEDBSOMA_PATH=$(pwd)/external" >> $GITHUB_ENV
       - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup Python virtual env
         run: |
           python --version
           python -m venv ./venv-soma
