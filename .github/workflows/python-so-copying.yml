@@ -260,7 +260,12 @@ jobs:
       # tiledbsoma-py has to use the cli flags to find the external
       # libtiledbsoma.so and not build it from source by shelling out to cmake
       - name: Delete cmake
-        run: which -a cmake | xargs sudo rm -f
+        run: |
+          echo before
+          which -a cmake
+          which -a cmake | xargs sudo rm -f
+          echo after
+          which -a cmake
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
