@@ -269,4 +269,8 @@ jobs:
       - name: Install TileDB-SOMA-Py with setuptools and --libtiledbsoma
         run: |
           cd apis/python
-          ../../venv-soma/bin/python setup.py install --single-version-externally-managed --record record.txt --libtiledbsoma=$(pwd)/external/
+          ../../venv-soma/bin/python setup.py install \
+            --single-version-externally-managed \
+            --record record.txt \
+            --libtiledb=$(pwd)/external/
+            --libtiledbsoma=$(pwd)/external/
