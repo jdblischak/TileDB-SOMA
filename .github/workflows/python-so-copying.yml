@@ -265,7 +265,7 @@ jobs:
           which -a cmake
           which -a cmake | xargs sudo rm -f
           echo after
-          which -a cmake
+          which -a cmake || echo cmake removed
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
