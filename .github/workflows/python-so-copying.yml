@@ -218,3 +218,55 @@ jobs:
           find . -name '*tile*.so*'
           find . -name '*tile*.dylib*'
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
+
+  # Tests that the --libtiledbsoma flag to setup.py continues working
+  setuptools:
+    runs-on: ${{ matrix.os }}
+    name: "${{ matrix.os }} setuptools"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-22.04", "macos-12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # for setuptools-scm
+      - name: Install pre-built libtiledb
+        run: |
+          mkdir -p external
+          if [ `uname -s` == "Darwin" ];
+          then
+            # Please do not edit manually -- let scripts/update-tiledb-version.py update this
+            wget --quiet https://github.com/TileDB-Inc/TileDB/releases/download/2.20.1/tiledb-macos-x86_64-2.20.1-249c024.tar.gz
+          else
+            # Please do not edit manually -- let scripts/update-tiledb-version.py update this
+            wget --quiet https://github.com/TileDB-Inc/TileDB/releases/download/2.20.1/tiledb-linux-x86_64-2.20.1-249c024.tar.gz
+          fi
+          tar -C external -xzf tiledb-*.tar.gz
+          ls external/lib/
+      - name: Build and install libtiledbsoma
+        run: |
+          cmake -S libtiledbsoma -B build-libtiledbsoma \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_PREFIX_PATH=$(pwd)/external/ \
+            -D CMAKE_INSTALL_PREFIX:PATH=$(pwd)/external/ \
+            -D OVERRIDE_INSTALL_PREFIX=OFF \
+            -D DOWNLOAD_TILEDB_PREBUILT=OFF \
+            -D FORCE_BUILD_TILEDB=OFF
+          cmake --build build-libtiledbsoma -j 2
+          cmake --build build-libtiledbsoma --target install-libtiledbsoma
+          ls external/lib/
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup Python virtual env
+        run: |
+          python --version
+          python -m venv ./venv-soma
+          ./venv-soma/bin/python -m pip install --prefer-binary pybind11-global typeguard sparse wheel setuptools
+          ./venv-soma/bin/python -m pip list
+      - name: Install TileDB-SOMA-Py with setuptools and --libtiledbsoma
+        run: |
+          cd apis/python
+          ../../venv-soma/bin/python setup.py install --single-version-externally-managed --record record.txt --libtiledbsoma=$(pwd)/external/
