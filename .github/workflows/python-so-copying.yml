@@ -289,8 +289,7 @@ jobs:
         run: |
           otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
           otool -l ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+      - name: Install runtime dependencies
+        run: ./venv-soma/bin/python -m pip install --prefer-binary -r apis/python/src/tiledbsoma.egg-info/requires.txt
       - name: Runtime test
-        run: |
-          # install minimal runtime dependencies
-          ./venv-soma/bin/python -m pip install --prefer-binary pyarrow_hotfix scanpy somacore tiledb
-          ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
+        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
