@@ -20,7 +20,7 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
-    name: "TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }} TILEDBSOMA_EXISTS: ${{ matrix.TILEDBSOMA_EXISTS }}"
+    name: "docker TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }} TILEDBSOMA_EXISTS: ${{ matrix.TILEDBSOMA_EXISTS }}"
     strategy:
       fail-fast: false
       matrix:
@@ -127,7 +127,7 @@ jobs:
 
   macos:
     runs-on: macos-12
-    name: "TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }} TILEDBSOMA_EXISTS: ${{ matrix.TILEDBSOMA_EXISTS }}"
+    name: "macos TILEDB_EXISTS: ${{ matrix.TILEDB_EXISTS }} TILEDBSOMA_EXISTS: ${{ matrix.TILEDBSOMA_EXISTS }}"
     strategy:
       fail-fast: false
       matrix:
@@ -182,10 +182,8 @@ jobs:
           ../../venv-soma/bin/python setup.py bdist_wheel
       - name: Inspect wheel
         run: |
-          unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.dylib'
-          unzip -l apis/python/dist/tiledbsoma-*.whl | grep '\.so'
-          unzip -l apis/python/dist/tiledbsoma-*.whl
-          ls -lR apis/python
+          unzip -l apis/python/dist/tiledbsoma-*.whl | grep -e '\.dylib' -e '\.so'
+          ls -l
       - name: Confirm libtiledb.dylib is copied
         if: ${{ matrix.TILEDB_EXISTS == 'no' }}
         run: unzip -l apis/python/dist/tiledbsoma-*.whl | grep -q libtiledb.dylib
@@ -211,11 +209,13 @@ jobs:
       - name: Install wheel
         run: ./venv-soma/bin/python -m pip install --prefer-binary apis/python/dist/tiledbsoma-*.whl
       - name: Check linking and RPATH
-        run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.dylib
+        run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
       - name: Runtime test
         run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
       - name: Confirm linking to installed shared objects
         run: |
           rm -fr build/ build-libtiledbsoma/ dist/ apis/python/build apis/python/src/tiledbsoma/*tile*.dylib*
-          find . -name '*tile*.dylib*' # should only show shared objects installed in virtual env
+          # should only show shared objects installed in virtual env
+          find . -name '*tile*.so*'
+          find . -name '*tile*.dylib*'
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
