@@ -281,9 +281,11 @@ jobs:
           readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
       - name: Check linking and RPATH (macOS)
         if: runner.os == 'macOS'
-        run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+        run: |
+          otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+          otool -l ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
       - name: Runtime test
         run: |
           # install minimal runtime dependencies
-          ./venv-soma/bin/python -m pip install --prefer-binary pyarrow_hotfix somacore
+          ./venv-soma/bin/python -m pip install --prefer-binary pyarrow_hotfix scanpy somacore tiledb
           ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
