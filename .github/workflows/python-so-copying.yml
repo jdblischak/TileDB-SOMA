@@ -274,3 +274,13 @@ jobs:
             --record record.txt \
             --tiledb=../../external/ \
             --libtiledbsoma=../../external/
+      - name: Check linking and RPATH (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          ldd ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+          readelf -d ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so  | grep R*PATH
+      - name: Check linking and RPATH (macOS)
+        if: runner.os == 'macOS'
+        run: otool -L ./venv-soma/lib/python*/site-packages/tiledbsoma/pytiledbsoma.*.so
+      - name: Runtime test
+        run: ./venv-soma/bin/python -c "import tiledbsoma; print(tiledbsoma.pytiledbsoma.version())"
